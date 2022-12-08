@@ -6,15 +6,13 @@ A IDEO maintained package for all your topic modeling needs!
 ### Development
 
 We use `pipenv` to manage dependencies.
+```bash
+pipenv install
+```
 
 #### Packaging Up
 
-<!-- We use `pipenv-setup` to create and manage the `setup.py` file. If not already installed, install with: 
+The `setup.py` file is manually maintained. This reposity can be installed as an editable package into other projects, via ssh, with:
 ```bash
-pipenv install --dev pipenv-setup
+pipenv install -e git+ssh://git@github.com/ideo/ideo-topic-modeler.git#egg=ideo_topic_modeler
 ```
-
-Then create or update the `setup.py` file with:
-```bash
-pipenv-setup sync
-``` -->

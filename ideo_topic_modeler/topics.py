@@ -1,13 +1,12 @@
 # from pathlib import Path
 from datetime import datetime
 
-
 import pandas as pd
 import altair as alt
-# from bertopic import BERTopic
+from umap import UMAP
+from bertopic import BERTopic
 import matplotlib.pyplot as plt
 from sentence_transformers import SentenceTransformer
-from umap import UMAP
 
 from ideo_topic_modeler import Model
 
