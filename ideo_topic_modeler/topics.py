@@ -33,6 +33,8 @@ class TopicModel(Model):
         super(TopicModel, self).__init__(data, text_column, data_source, language)
 
         self.model_directory = model_directory
+        self.data_filename = self.model_directory/ f"data_{TODAY}.json"        
+        
         #FIXME what's the best way to do this?
         if self.data_source == 'reddit':
             self.pre_trained_model = "paraphrase-mpnet-base-v2"
@@ -70,7 +72,6 @@ class TopicModel(Model):
         
         self.data.loc[:, 'tf_idf_words'] = self.data['topic'].apply(lambda x: self.topic_model.get_topic(x))
         
-        self.data_filename = self.model_directory/ f"data_{TODAY}.json"
         self.data.to_json(self.data_filename, orient='records', lines=True)        
 
 
