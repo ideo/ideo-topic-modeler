@@ -10,13 +10,13 @@ if __name__ == "__main__":
     # Get Data  
     # filename = 'reddit_continuous glucose monitoring_in_all-subreddits_2021-01-01_2022-12-01_complete.json'
     # filename = 'reddit_wellness+goals_in_all-subreddits_2022-08-01_2022-12-02_complete.json'
-    filename = "reddit_wellness_2022-01-01_2022-12-01_complete.json"
+    filename = "reddit_climate+change_in_climate_2021-12-06_2022-12-06_complete.json"
     data = pd.read_json(DATA_DIR / filename, lines=True)
 
     text_column = 'body'
     data_source = 'reddit'
     start_from_model = None
-    # start_from_model = '02_12_2022_114257'
+    start_from_model = '12_12_2022_144903'
 
 
     my_model = TopicModel(data, text_column, data_source, DATA_DIR)

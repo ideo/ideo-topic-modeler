@@ -9,7 +9,6 @@ altair = "*"
 matplotlib = "*"
 sentence-transformers = "*"
 bertopic = "*"
-umap = "*"
 
 [dev-packages]
 
