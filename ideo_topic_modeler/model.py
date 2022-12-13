@@ -15,7 +15,7 @@ class Model:
         Parameters
         ----------
         data: pandas DataFrame instance
-            The dataframe with a column to be used for n-gram analysis.
+            The dataframe with a column to be used for modeling.
         text_column: str
             The name of the column to be used for topic analysis.
         data_source: str
