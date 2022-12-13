@@ -70,7 +70,8 @@ class TopicModel(Model):
         
         self.data.loc[:, 'tf_idf_words'] = self.data['topic'].apply(lambda x: self.topic_model.get_topic(x))
         
-        self.data.to_json(self.model_directory/ f"data_{TODAY}.json", orient='records', lines=True)        
+        self.data_filename = self.model_directory/ f"data_{TODAY}.json"
+        self.data.to_json(self.data_filename, orient='records', lines=True)        
 
 
     def plot(self, limit_topics = 10, read_posts = False, text_column='body', limit_posts=20, **kwargs):
@@ -250,8 +251,8 @@ class TopicModel(Model):
 
         model_filename = self.model_directory/ f"model_{model_timestamp}"
         embeddings_filename = self.model_directory/ f"embeddings_{model_timestamp}.json"
-        data_filename = self.model_directory/ f"data_{model_timestamp}.json"
+        self.data_filename = self.model_directory/ f"data_{model_timestamp}.json"
 
         self.topic_model = BERTopic.load(model_filename)
-        self.data = pd.read_json(data_filename, lines=True)
+        self.data = pd.read_json(self.data_filename, lines=True)
         self.embeddings = pd.read_json(embeddings_filename, lines=True)
