@@ -21,11 +21,11 @@ class Model:
         data_source: str
             where the data are coming from
         '''
+        self.language = language
+        self.data_source = data_source
+
         if not data.empty:
             self.data = data
-            self.language = language
-            self.data_source = data_source
-
 
             # check if text column exists in data, if not raise an error
             if text_column in self.data.columns:
