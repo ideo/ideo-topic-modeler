@@ -21,6 +21,7 @@ class Model:
         data_source: str
             where the data are coming from
         '''
+        
         self.language = language
         self.data_source = data_source
 

@@ -34,10 +34,10 @@ class TopicModel(Model):
 
         self.model_directory = model_directory
         self.data_filename = self.model_directory/ f"data_{TODAY}.json"        
-        
+
         #FIXME what's the best way to do this?
-        if self.data_source == 'reddit':
-            self.pre_trained_model = "paraphrase-mpnet-base-v2"
+        # if self.data_source == 'reddit':
+        self.pre_trained_model = "paraphrase-mpnet-base-v2"
 
 
     def run(self):
