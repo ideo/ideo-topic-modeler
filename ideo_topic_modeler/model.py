@@ -25,6 +25,7 @@ class Model:
         self.data_source = data_source
 
         if not data.empty:
+            
             self.data = data
 
             # check if text column exists in data, if not raise an error
