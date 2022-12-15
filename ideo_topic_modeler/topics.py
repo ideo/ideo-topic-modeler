@@ -73,7 +73,34 @@ class TopicModel(Model):
         self.data.loc[:, 'tf_idf_words'] = self.data['topic'].apply(lambda x: self.topic_model.get_topic(x))
         
         self.data.to_json(self.data_filename, orient='records', lines=True)        
+        self.write_model_info()
 
+    def write_model_info(self):
+        """This function creates a txt file with information about the model.
+        For now these include: keywords, subreddits, topics, and date range.
+        """
+        
+        with open(self.model_directory/ f"INFO_{TODAY}.txt", 'w') as the_file:
+            #write keywords and subreddits
+            for k in ['keyword','subreddit']:
+                the_file.write(f"{k.upper()}: {','.join(self.data[k].unique().tolist())}\n")
+                the_file.write('\n')
+            
+            #topics
+            the_file.write(f"TOPICS:\n")
+            for topic in sorted(self.data['topic_name'].unique().tolist()):
+                the_file.write(f"{topic}\n")
+            the_file.write('\n')
+
+
+            #dates range
+            dates = pd.to_datetime(self.data['created_utc'])
+            min_date = dates.min().date().strftime('%Y-%m-%d')
+            max_date = dates.max().date().strftime('%Y-%m-%d')
+            the_file.write(f"DATES: {min_date} to {max_date}\n")
+            the_file.write('\n')
+            
+    
 
     def plot(self, limit_topics = 10, read_posts = False, text_column='body', limit_posts=20, **kwargs):
         '''
