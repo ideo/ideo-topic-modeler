@@ -10,6 +10,8 @@ setup(
         "matplotlib",
         "sentence-transformers",
         "bertopic",
+        "plotly",
+        "streamlit-plotly-events"
         # "umap",
       ],
     license='Creative Commons Attribution-Noncommercial-Share Alike license',

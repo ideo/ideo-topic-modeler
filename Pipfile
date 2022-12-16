@@ -9,6 +9,8 @@ altair = "*"
 matplotlib = "*"
 sentence-transformers = "*"
 bertopic = "*"
+plotly = "*"
+streamlit_plotly_events = "*"
 
 [dev-packages]
 
