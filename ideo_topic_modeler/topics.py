@@ -3,10 +3,13 @@ from datetime import datetime
 
 import pandas as pd
 import altair as alt
+import plotly.express as px
 from umap import UMAP
 from bertopic import BERTopic
 import matplotlib.pyplot as plt
 from sentence_transformers import SentenceTransformer
+import plotly.express as px
+from streamlit_plotly_events import plotly_events
 
 from ideo_topic_modeler import Model
 
@@ -48,12 +51,17 @@ class TopicModel(Model):
         self.topic_model = BERTopic()
 
 
-    def save_model(self):
+    def save_model(self, save_data = False):
         """This function saves model and embeddings.
         """
         pd.DataFrame(self.embeddings).to_json(self.model_directory/ f"embeddings_{TODAY}.json", orient='records', lines=True)
         self.topic_model.save(self.model_directory/ f"model_{TODAY}")
+        if save_data:
+            self.save_data(suffix=TODAY)
         
+    def save_data(self, suffix):
+        """Saves the data after any modifications (like clustering)."""
+        self.data.to_json(self.model_directory/ f"data_{suffix}.json", orient='records', lines=True)
     
     def enrich_data_and_save_them(self):
         """This function adds to the data the topics information and saves them into a json file.
@@ -75,7 +83,7 @@ class TopicModel(Model):
         self.data.to_json(self.data_filename, orient='records', lines=True)        
 
 
-    def plot(self, limit_topics = 10, read_posts = False, text_column='body', limit_posts=20, **kwargs):
+    def plot(self, limit_topics = 10, text_column='body', **kwargs):
         '''
         Plots the topic frequency bar chart, the UMAP clusters and (optionally) allows for topic selection to read posts.
  
@@ -89,31 +97,26 @@ class TopicModel(Model):
             Column in the dataframe to be used for displaying the post content.
         limit_posts: int
             The number of posts to display in the textbox for selected topic.
-
         Returns
         -------
         altair object of the two charts + (optionally) a text box for display of underlying posts.
         '''
 
-        #TODO: update self.data with whatever is in Fra's implementation of the model
         #TODO: control stuff like width and height through kwargs passed on from streamlit to make the charts more responsive
         data_for_plot = self.data[(self.data['topic']!=-1) & (self.data['topic'] < limit_topics)]
         topicSelection = alt.selection(type="single", encodings=['y'])
 
-        topic_bar = self._plot_topic_frequency(data_for_plot, topicSelection)
-        topic_clusters = self._plot_clusters(data_for_plot, topicSelection)
+        topic_bar = self._plot_topic_frequency_altair(data_for_plot, topicSelection)
+        topic_clusters = self._plot_clusters_altair(data_for_plot, topicSelection)
 
         topic_charts = alt.hconcat(topic_bar, topic_clusters)
-
-        if read_posts:
-            topic_textbox = self._plot_textbox(data_for_plot, text_column, topicSelection, limit_posts)
-            topic_charts = alt.vconcat(topic_charts, topic_textbox)
 
 
         return topic_charts.configure_axis(
                                         labelFontSize=12,
                                         titleFontSize=13,
-                                        )
+                                        ) 
+
 
     def _get_corpus(self):
         """This function computes the corpus
@@ -136,9 +139,9 @@ class TopicModel(Model):
         self.data['dim1'] = X_embedded[:,1]
 
 
-    def _plot_clusters(self, data, topic_selector, **kwargs):
+    def _plot_clusters_altair(self, data, topic_selector, **kwargs):
         '''
-        Plots the UMAP cluster color coded by topic.
+        Plots the UMAP cluster color coded by topic using altair.
         
         Parameters
         ----------
@@ -160,11 +163,34 @@ class TopicModel(Model):
                                             href='url:N').properties(
                                         ).transform_filter(
                                             topic_selector)
-
-
-    def _plot_topic_frequency(self, data, selector, **kwargs):
+    
+    def _plot_clusters_plotly(self, data, body_column="body", title_column="title", url_column="url", **kwargs):
         '''
-        Plot the topic frequency bar chart.
+        Plots the UMAP cluster color coded by topic using plotly.
+        
+        Parameters
+        ----------
+        data: pandas DataFrame
+            The dataframe filtered on a subset of the top topics for plotting.
+        topic_selector: altair selector object
+            A selector object that binds this chart to the topic frequency chart.
+
+        Returns
+        -------
+        The altair clusters chart.
+        '''
+        width = kwargs.pop('width', 800)
+        height = kwargs.pop('height', 600)
+        return px.scatter(data, x="dim0", y="dim1", color="topic_name", 
+                            custom_data=[body_column, title_column, url_column], 
+                            template='seaborn', width=width, height=height
+                            ).update_layout(clickmode='event+select'
+                            ).update_traces(marker_size=5)
+
+
+    def _plot_topic_frequency_altair(self, data, selector, **kwargs):
+        '''
+        Plot the topic frequency bar chart using altair.
 
         Parameters
         ----------
@@ -185,6 +211,24 @@ class TopicModel(Model):
                                                 width=400,
                                                 height=300
                                             ).add_selection(selector)
+
+
+    def _plot_topic_frequency_plotly(self, data, **kwargs):
+        '''
+        Plot the topic frequency bar chart using plotlu.
+
+        Parameters
+        ----------
+        data: pandas DataFrame
+            The dataframe filtered on a subset of the top topics for plotting.
+
+        Returns
+        -------
+        The plotly topic frequency chart.
+        '''
+        width = kwargs.pop('width', 800)
+        height = kwargs.pop('height', 600)
+        return px.histogram(data, y='topic_name', barmode='group', width=width, height=height)
 
 
 
