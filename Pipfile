@@ -11,6 +11,7 @@ sentence-transformers = "*"
 bertopic = "*"
 plotly = "*"
 streamlit_plotly_events = "*"
+ideo-topic-modeler = {path = "."}
 
 [dev-packages]
 
