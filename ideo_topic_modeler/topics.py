@@ -230,9 +230,11 @@ class TopicModel(Model):
         '''
         width = kwargs.pop('width', 800)
         height = kwargs.pop('height', 600)
+        color = kwargs.pop('color', 'blue')
+        color_discrete_map = kwargs.pop('color_discrete_map', 'viridis')
         return px.histogram(data, y='topic_name', barmode='group', 
-                            width=width, height=height,
-                            color_discrete_sequence=['indianred']
+                            width=width, height=height, color=color,
+                            color_discrete_map=color_discrete_map
                             ).update_layout(clickmode='event+select')
 
 
