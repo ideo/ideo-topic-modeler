@@ -14,8 +14,8 @@ from streamlit_plotly_events import plotly_events
 from ideo_topic_modeler import Model
 
 
-TODAY = datetime.now().strftime("%d_%m_%Y_%H%M%S")
-TODAY_DATE = datetime.now().date().strftime("%d_%m_%Y")
+# TODAY = datetime.now().strftime("%d_%m_%Y_%H%M%S")
+# TODAY_DATE = datetime.now().date().strftime("%d_%m_%Y")
 
 
 class TopicModel(Model):
@@ -35,8 +35,10 @@ class TopicModel(Model):
         '''
         super(TopicModel, self).__init__(data, text_column, data_source, language)
 
+        today = datetime.now().strftime("%d_%m_%Y_%H%M%S")
+
         self.model_directory = model_directory
-        self.data_filename = self.model_directory/ f"data_{TODAY}.json"        
+        self.data_filename = self.model_directory/ f"data_{today}.json"        
 
         #FIXME what's the best way to do this?
         # if self.data_source == 'reddit':
@@ -183,7 +185,7 @@ class TopicModel(Model):
         height = kwargs.pop('height', 600)
         return px.scatter(data, x="dim0", y="dim1", color="topic_name", 
                             custom_data=[body_column, title_column, url_column], 
-                            template='seaborn', width=width, height=height
+                            width=width, height=height
                             ).update_layout(clickmode='event+select'
                             ).update_traces(marker_size=5)
 
@@ -228,7 +230,10 @@ class TopicModel(Model):
         '''
         width = kwargs.pop('width', 800)
         height = kwargs.pop('height', 600)
-        return px.histogram(data, y='topic_name', barmode='group', width=width, height=height)
+        return px.histogram(data, y='topic_name', barmode='group', 
+                            width=width, height=height,
+                            color_discrete_sequence=['indianred']
+                            ).update_layout(clickmode='event+select')
 
 
 
