@@ -263,8 +263,7 @@ class TopicModel(Model):
         # width = kwargs.pop('width', 800)
         # height = kwargs.pop('height', 600)
         return px.histogram(data, y='topic_name', barmode='group', 
-                            width=width, height=height, color='blue',
-                            color_discrete_map='viridis'
+                            width=width, height=height
                             ).update_layout(clickmode='event+select')
 
 
