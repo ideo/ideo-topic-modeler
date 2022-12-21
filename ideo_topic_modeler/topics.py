@@ -14,8 +14,8 @@ from streamlit_plotly_events import plotly_events
 from ideo_topic_modeler import Model
 
 
-# TODAY = datetime.now().strftime("%d_%m_%Y_%H%M%S")
-# TODAY_DATE = datetime.now().date().strftime("%d_%m_%Y")
+TODAY = datetime.now().strftime("%d_%m_%Y_%H%M%S")
+TODAY_DATE = datetime.now().date().strftime("%d_%m_%Y")
 
 
 class TopicModel(Model):
@@ -35,10 +35,10 @@ class TopicModel(Model):
         '''
         super(TopicModel, self).__init__(data, text_column, data_source, language)
 
-        today = datetime.now().strftime("%d_%m_%Y_%H%M%S")
+        # today = datetime.now().strftime("%d_%m_%Y_%H%M%S")
 
         self.model_directory = model_directory
-        self.data_filename = self.model_directory/ f"data_{today}.json"        
+        # self.data_filename = self.model_directory/ f"data_{today}.json"        
 
         #FIXME what's the best way to do this?
         # if self.data_source == 'reddit':
@@ -53,19 +53,22 @@ class TopicModel(Model):
         self.topic_model = BERTopic()
 
 
-    def save_model(self, save_data = False):
+    def save_model(self, my_timestamp = TODAY):
         """This function saves model and embeddings.
         """
-        pd.DataFrame(self.embeddings).to_json(self.model_directory/ f"embeddings_{TODAY}.json", orient='records', lines=True)
-        self.topic_model.save(self.model_directory/ f"model_{TODAY}")
-        if save_data:
-            self.save_data(suffix=TODAY)
+        pd.DataFrame(self.embeddings).to_json(self.model_directory/ f"embeddings_{my_timestamp}.json", orient='records', lines=True)
+        self.topic_model.save(self.model_directory/ f"model_{my_timestamp}")
+
+        # #FIXME when is this ever called with save_data = True?
+        # if save_data:
+        #     self.save_data(my_timestamp)
         
-    def save_data(self, suffix):
+    def save_data(self, my_timestamp):
         """Saves the data after any modifications (like clustering)."""
-        self.data.to_json(self.model_directory/ f"data_{suffix}.json", orient='records', lines=True)
+        self.data_filename = self.model_directory/ f"data_{my_timestamp}.json"
+        self.data.to_json(self.data_filename, orient='records', lines=True)
     
-    def enrich_data_and_save_them(self):
+    def enrich_data_and_save_them(self, my_timestamp = TODAY):
         """This function adds to the data the topics information and saves them into a json file.
         """
 
@@ -82,15 +85,17 @@ class TopicModel(Model):
         
         self.data.loc[:, 'tf_idf_words'] = self.data['topic'].apply(lambda x: self.topic_model.get_topic(x))
         
-        self.data.to_json(self.data_filename, orient='records', lines=True)        
-        self.write_model_info()
+        self.data_filename = self.model_directory/ f"data_{my_timestamp}.json"
+        self.data.to_json(self.data_filename, orient='records', lines=True)      
 
-    def write_model_info(self):
+        self.write_model_info(my_timestamp)
+
+    def write_model_info(self, my_timestamp = TODAY):
         """This function creates a txt file with information about the model.
         For now these include: keywords, subreddits, topics, and date range.
         """
         
-        with open(self.model_directory/ f"INFO_{TODAY}.txt", 'w') as the_file:
+        with open(self.model_directory/ f"INFO_{my_timestamp}.txt", 'w') as the_file:
             #write keywords and subreddits
             for k in ['keyword','subreddit']:
                 the_file.write(f"{k.upper()}: {','.join(self.data[k].unique().tolist())}\n")
