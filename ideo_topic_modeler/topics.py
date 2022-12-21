@@ -247,7 +247,7 @@ class TopicModel(Model):
                                             ).add_selection(selector)
 
 
-    def _plot_topic_frequency_plotly(self, data, **kwargs):
+    def _plot_topic_frequency_plotly(self, data, width = 800, height = 600):
         '''
         Plot the topic frequency bar chart using plotlu.
 
@@ -260,13 +260,11 @@ class TopicModel(Model):
         -------
         The plotly topic frequency chart.
         '''
-        width = kwargs.pop('width', 800)
-        height = kwargs.pop('height', 600)
-        color = kwargs.pop('color', 'blue')
-        color_discrete_map = kwargs.pop('color_discrete_map', 'viridis')
+        # width = kwargs.pop('width', 800)
+        # height = kwargs.pop('height', 600)
         return px.histogram(data, y='topic_name', barmode='group', 
-                            width=width, height=height, color=color,
-                            color_discrete_map=color_discrete_map
+                            width=width, height=height, color='blue',
+                            color_discrete_map='viridis'
                             ).update_layout(clickmode='event+select')
 
 
