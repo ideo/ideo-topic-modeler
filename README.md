@@ -14,5 +14,5 @@ pipenv install
 
 The `setup.py` file is manually maintained. This reposity can be installed as an editable package into other projects, via ssh, with:
 ```bash
-pipenv install -e git+ssh://git@github.com/ideo/ideo-topic-modeler.git#egg=ideo_topic_modeler
+pipenv install git+https://github.com/ideo/ideo-topic-modeler.git@main#egg=ideo_topic_modeler
 ```
