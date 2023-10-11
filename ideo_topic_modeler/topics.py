@@ -49,8 +49,9 @@ class TopicModel(Model):
     def save_model(self):
         """This function saves model and embeddings.
         """
-        pd.DataFrame(self.embeddings).to_json(self.model_directory/ f"embeddings_{TODAY}.json", orient='records', lines=True)
-        self.topic_model.save(self.model_directory/ f"model_{TODAY}")
+        today = datetime.now().strftime("%d_%m_%Y_%H%M%S")
+        pd.DataFrame(self.embeddings).to_json(self.model_directory/ f"embeddings_{today}.json", orient='records', lines=True)
+        self.topic_model.save(self.model_directory/ f"model_{today}")
         
     
     def enrich_data_and_save_them(self):
