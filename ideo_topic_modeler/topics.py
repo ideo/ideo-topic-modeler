@@ -46,15 +46,14 @@ class TopicModel(Model):
         self.topic_model = BERTopic()
 
 
-    def save_model(self):
+    def save_model(self, today=TODAY):
         """This function saves model and embeddings.
         """
-        today = datetime.now().strftime("%d_%m_%Y_%H%M%S")
         pd.DataFrame(self.embeddings).to_json(self.model_directory/ f"embeddings_{today}.json", orient='records', lines=True)
         self.topic_model.save(self.model_directory/ f"model_{today}")
         
     
-    def enrich_data_and_save_them(self):
+    def enrich_data_and_save_them(self, today=TODAY):
         """This function adds to the data the topics information and saves them into a json file.
         """
 
@@ -68,10 +67,9 @@ class TopicModel(Model):
                                   self.topic_model.get_topic_info()['Name'].tolist()))
 
         self.data.loc[:, 'topic_name'] = self.data['topic'].apply(lambda x: topic_name_map[x])        
-        
         self.data.loc[:, 'tf_idf_words'] = self.data['topic'].apply(lambda x: self.topic_model.get_topic(x))
-        
-        self.data.to_json(self.model_directory/ f"data_{TODAY}.json", orient='records', lines=True)        
+
+        self.data.to_json(self.model_directory/ f"data_{today}.json", orient='records', lines=True)        
 
 
     def plot(self, limit_topics = 10, read_posts = False, text_column='body', limit_posts=20, **kwargs):
