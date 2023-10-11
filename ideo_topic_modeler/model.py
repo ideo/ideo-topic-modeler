@@ -24,13 +24,14 @@ class Model:
         self.data = data
         self.language = language
         self.data_source = data_source
+        self.text_column = text_column
 
-
+        # This is a pointless check, and causing problems
         # check if text column exists in data, if not raise an error
-        if text_column in self.data.columns:
-            self.text_column = text_column
-        else:
-            raise ValueError(f'{text_column} is not a column of provided dataframe.')
+        # if text_column in self.data.columns:
+        #     self.text_column = text_column
+        # else:
+        #     raise ValueError(f'{text_column} is not a column of provided dataframe.')
 
         #added this cause for checks it's useful to keep a copy of the original text.
         self.modeling_column = f"{self.text_column}_clean"
