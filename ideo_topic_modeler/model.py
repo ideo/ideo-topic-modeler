@@ -35,9 +35,9 @@ class Model:
 
         #added this cause for checks it's useful to keep a copy of the original text.
         self.modeling_column = f"{self.text_column}_clean"
-
         self.transform_data()
         self.clean_data()
+
 
     def transform_data(self):
         """This function transforms the data set, including:
@@ -49,7 +49,7 @@ class Model:
         # Removing data with missing body
         print(f"Size initial dataset = {len(self.data)} rows")
         self.data = self.data.dropna(subset=[self.text_column]).copy()
-        print(f"Removing missing values --> {len(self.data)} rows")
+        print(f"Removed missing values. Modeling {len(self.data)} remaining rows.")
 
         #making a copy of the original text, before cleaning it.
         self.data[f"{self.text_column}_original"] = self.data[self.text_column]
@@ -63,12 +63,13 @@ class Model:
         if 'title' in self.data.columns:
             self.data.loc[:,self.text_column] = self.data['title'] + '.' + self.data[self.text_column]
 
+
     def clean_data(self):
         """This function contains the cleaning rules
         """
-
         #decode ascii
-        self.data.loc[:, self.modeling_column] = self.data[self.text_column].apply(lambda x: ut.decode_ascii(x))
+        # self.data.loc[:, self.modeling_column] = self.data[self.text_column].apply(lambda x: ut.decode_ascii(x))
+        self.data.loc[:, self.modeling_column] = self.data[self.text_column].apply(lambda x: x..encode("ascii", "ignore").decode())
 
         #removing https and addresses:
         self.data.loc[:, self.modeling_column] = self.data[self.modeling_column].apply(lambda x: re.sub(r"http\S+", "", x, flags=re.I))
