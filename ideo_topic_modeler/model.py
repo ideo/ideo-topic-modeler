@@ -69,7 +69,7 @@ class Model:
         """
         #decode ascii
         # self.data.loc[:, self.modeling_column] = self.data[self.text_column].apply(lambda x: ut.decode_ascii(x))
-        self.data.loc[:, self.modeling_column] = self.data[self.text_column].apply(lambda x: x..encode("ascii", "ignore").decode())
+        self.data.loc[:, self.modeling_column] = self.data[self.text_column].apply(lambda x: x.encode("ascii", "ignore").decode())
 
         #removing https and addresses:
         self.data.loc[:, self.modeling_column] = self.data[self.modeling_column].apply(lambda x: re.sub(r"http\S+", "", x, flags=re.I))
